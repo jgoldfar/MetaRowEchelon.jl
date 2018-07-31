@@ -1,0 +1,4 @@
+name = "MetaRowEchelon"
+uuid = "a9a8b776-935c-11e8-0e2d-397ddf4dd959"
+authors = ["Jonathan Goldfarb <jgoldfar@gmail.com>"]
+version = "0.1.0"
