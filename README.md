@@ -4,6 +4,14 @@ This is an experiment in metaprogramming Julia for the automated solution of (we
 
 While I have possible applications in mind, right now the amount of copy/paste and general effectiveness suggest it should be considered a very rough WIP.
 
+## TODO ##
+
+* Deduplicate simplification/arithmetic for symbol logic
+
+* Along with the above TODO, define unit tests for all transformations on Exprs and Coefficients to ensure good coverage and flexibility.
+
+* Fix macro hygiene issue: output should pick up local variable bindings (?) and/or emit a function of the right-hand side (?) that allows extraction of the independent variables on the left-hand side. Right now, none of that works...
+
 ### Who do I talk to? ###
 
 * Jonathan Goldfarb <jgoldfar@gmail.com>
