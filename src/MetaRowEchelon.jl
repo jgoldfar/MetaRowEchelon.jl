@@ -1,4 +1,8 @@
 module MetaRowEchelon
+@static if VERSION <= v"0.7-"
+    using Compat: undef, something#, @warn
+end
+
 
 include("coefficients.jl")
 
@@ -21,7 +25,7 @@ Note: this routine is v0.6-only. Will require re-implementation for v0.7+.
 function handle_lhs! end
 
 function handle_lhs!(coefficients, vars, lhsExpr::Symbol, eqNumber)
-    varInd = findfirst(vars, lhsExpr)
+    varInd = something(findfirst(isequal(lhsExpr), vars))
     for i in 1:length(vars)
         if i == varInd
             coefficients[eqNumber, i] = Coefficient(1)
@@ -97,7 +101,7 @@ function handle_lhs!(coefficients, vars, lhsExpr::Expr, eqNumber)
     end
 
     for (var, coeff) in coeffs
-        varInd = findfirst(vars, var)
+        varInd = something(findfirst(isequal(var), vars))
         coefficients[eqNumber, varInd] = coeff
     end
 end
@@ -117,6 +121,11 @@ end
 function handle_rhs!(rhsVector, rhsExpr::Expr, eqNumber)
     if rhsExpr.head == :block
         for arg in rhsExpr.args
+            @static if VERSION >= v"0.7-"
+                if arg isa LineNumberNode
+                    continue
+                end
+            end
             if arg isa Symbol || arg isa Int
                 # What does the appearance of multiple args mean?
                 rhsVector[eqNumber] = Coefficient(arg)
@@ -164,6 +173,11 @@ equations (linear in `vars` given in `codeLines` (as an AST).
 function parse_linsys!(coefficients, rhsVector, vars, codeLines)
     eqNumber = 0
     for codeLine in codeLines
+        @static if VERSION >= v"0.7-"
+            if codeLine isa LineNumberNode
+                continue
+            end
+        end
         if codeLine.head == :(=)
             eqNumber += 1
             grok_equality!(coefficients, rhsVector, vars, codeLine.args, eqNumber)
@@ -216,8 +230,8 @@ and form matrix of coefficients and right-hand side vector of appropriate size.
 function prepare_containers(vars, blockLines)
     numVars = length(vars)
     numEq = length(blockLines) # This is an overestimate, since other, non-equation nodes may be present.
-    coefficientMatrix = Matrix{Coefficient}(numEq, numVars)
-    rhsVector = Vector{Coefficient}(numEq)
+    coefficientMatrix = Matrix{Coefficient}(undef, numEq, numVars)
+    rhsVector = Vector{Coefficient}(undef, numEq)
     coefficientMatrix, rhsVector
 end
 

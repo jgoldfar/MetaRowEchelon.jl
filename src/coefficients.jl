@@ -353,7 +353,7 @@ function _simplify(a::Expr)
         end
         return :($(arg1_out)/$(arg2_out))
     else
-        warn("Cannot simplify with head $(a.head) and args $(a.args).")
+        # @warn("Cannot simplify with head $(a.head) and args $(a.args).")
         return a
     end
 end
