@@ -154,6 +154,8 @@ coeffDiff(a, b) = _coeffDiff(a, b)
 # to the end?
 
 # Output/simplification routines, primarily for pretty-printing.
+_extract_factors(a::Symbol) = [1, Dict(a => 1)]
+_extract_factors(a::T) where {T <: Integer} = [a, Dict{Union{Expr, Symbol}, Int}()]
 function _extract_factors(a::Expr)
     local numFactor = 1
     local factors = Dict{Union{Expr, Symbol}, Int}()
