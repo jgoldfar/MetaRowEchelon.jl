@@ -6,16 +6,12 @@ os:
 
 julia:
   - 0.6
+  - 0.7
   - nightly
 
 notifications:
   email: false
 
-# uncomment the following lines to override the default test script
-script:
-  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("MetaRowEchelon"); Pkg.test("MetaRowEchelon"; coverage=true)'
-
 after_success:
   # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("MetaRowEchelon")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'cd(Pkg.dir(\"${JL_PKG}\")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
